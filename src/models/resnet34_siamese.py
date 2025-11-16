@@ -1,0 +1,31 @@
+import torch
+import torch.nn as nn
+import torchvision.models as models
+
+class ResNet34Embedding(nn.Module):
+    def __init__(self, embedding_dim=10, pretrained=True):
+        super().__init__()
+        weights = models.ResNet34_Weights.IMAGENET1K_V1 if pretrained else None
+        net = models.resnet34(weights=weights)
+        in_ch = net.fc.in_features
+        net.fc = nn.Linear(in_ch, embedding_dim)
+        self.model = net
+
+    def forward(self, x):
+        return self.model(x)
+
+class SiameseNet(nn.Module):
+    def __init__(self, embedding_dim=10, pretrained=True):
+        super().__init__()
+        self.embedding_net = ResNet34Embedding(embedding_dim, pretrained)
+
+    def forward_once(self, x):
+        return self.embedding_net(x)
+
+    def forward(self, x1, x2):
+        z1 = self.forward_once(x1)
+        z2 = self.forward_once(x2)
+        return z1, z2
+
+def pairwise_l2(z1, z2):
+    return torch.norm(z1 - z2, p=2, dim=1)
