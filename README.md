@@ -1,1 +1,124 @@
+# Scribe Verification Using Siamese, Triplet, and Vision Transformer Networks
 
+This repository contains a deep metric learning framework for **scribe verification** on ancient and modern Chinese handwriting images.  
+The objective is to automatically determine whether two manuscript fragments were written by the same scribe by learning discriminative embeddings using **Siamese**, **Triplet**, and **ViT-based** neural architectures.
+
+The project includes:
+- Custom MobileNetV3-based Siamese model (MobileNetV3+)
+- Triplet-learning architecture with dynamic sampling
+- ViT-B/16 Siamese implementation
+- Unified PyTorch training & evaluation framework
+- Contrastive and Triplet loss functions
+- Fixed-pair evaluation and ROC/AUC metric computation
+
+---
+
+## 📁 Project Structure
+
+```
+├── configs/                # YAML configuration files
+├── data/                   # (Not included) Dataset folders: train/ and test/
+├── src/
+│   ├── models/             # CNN, Siamese, Triplet, ViT architectures
+│   ├── dataset_pairs.py    # Pair dataset for Siamese training
+│   ├── dataset_triplets.py # Triplet dataset for Triplet learning
+│   ├── transforms.py       # Image preprocessing pipeline
+│   ├── losses.py           # Contrastive and Triplet losses
+│   ├── metrics.py          # ROC/AUC/FAR/FRR metrics
+│   └── viz.py              # ROC visualization utilities
+├── train.py                # Siamese training script
+├── train_triplet.py        # Triplet training script
+├── evaluate.py             # Evaluation on fixed pairs
+├── evaluate_triplet.py     # Triplet evaluation
+└── README.md               # Project documentation
+```
+
+---
+
+## 📊 Datasets Used
+
+### **1. Tsinghua Bamboo Slips Dataset**
+Ancient Chinese manuscript fragments attributed to different scribes.  
+Used for experiments on historical scribe verification.
+
+### **2. MCCD: Multi-Attribute Chinese Calligraphy Dataset**
+A modern dataset containing handwritten Chinese characters from multiple calligraphers.  
+A subset of writers with the largest number of samples was used to ensure balanced training.
+
+---
+
+## 📁 Dataset Availability
+
+Both datasets used in this project are **not openly downloadable**, but:
+
+> **They can be accessed upon reasonable request to the original authors for research purposes.**
+
+- The **Tsinghua Bamboo Slips Dataset** can be requested from the authors of the corresponding publication.  
+- The **MCCD dataset** is available upon request according to the instructions in its original paper.
+
+This repository **does not include any dataset files**, and only publicly permitted samples were used.
+
+---
+
+## ⚙️ Installation
+
+```bash
+git clone <repository-url>
+cd ScribeVerification
+python3 -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+---
+
+## 🏋️ Training
+
+### Train a Siamese Network
+```bash
+python train.py --config configs/default.yaml
+```
+
+### Train a Triplet Network
+```bash
+python train_triplet.py --config configs/triplet.yaml
+```
+
+---
+
+## 🧪 Evaluation
+
+### Evaluate a Siamese Model
+```bash
+python evaluate.py
+```
+
+### Evaluate a Triplet Model
+```bash
+python evaluate_triplet.py
+```
+
+---
+
+## 📈 Results Summary
+
+- **MobileNetV3+ Custom (Siamese)** achieved the best overall performance  
+  - AUC: ~0.95  
+  - Accuracy: ~0.88  
+- Triplet learning did **not** outperform contrastive learning in this domain.  
+- ViT-B/16 Siamese performed lower than CNN-based methods on both datasets.
+
+---
+
+## 📬 Contact
+
+For dataset access, please contact the original dataset authors as listed in their respective publications.
+
+For questions regarding this repository, feel free to open an issue or reach out via email.
+
+---
+
+## 📄 License
+
+This project is released for academic and research use.  
+Redistribution of dataset files is strictly prohibited.
