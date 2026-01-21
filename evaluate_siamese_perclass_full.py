@@ -12,20 +12,17 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib import font_manager
+from matplotlib.patches import Rectangle
 
-# Option 1: if installed (common on Windows)
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "Noto Sans CJK SC"]
 plt.rcParams["axes.unicode_minus"] = False
 
 from src.transforms import get_eval_transform
 from src.dataset_pairs import PairDataset
-from src.metrics import roc_stats_from_dist  # your existing function
-from src.viz import plot_roc                 # your existing function
+from src.metrics import roc_stats_from_dist  
+from src.viz import plot_roc                 
 
 
-# -----------------------------
-# CSV utilities
-# -----------------------------
 def read_pairs_csv(path):
     pairs = []
     with open(path, "r", encoding="utf-8") as f:
@@ -36,13 +33,9 @@ def read_pairs_csv(path):
 
 
 def infer_class_from_path(p):
-    # expects .../<class_name>/<file>
     return os.path.basename(os.path.dirname(p))
 
 
-# -----------------------------
-# Model loading (dynamic)
-# -----------------------------
 def load_model(model_module: str, embedding_dim: int, pretrained: bool, device: str):
     """
     model_module example:
@@ -75,9 +68,6 @@ def forward_pair_embeddings(model, x1, x2):
     raise RuntimeError("Model does not support pair forward. Expected forward(x1,x2)->(z1,z2) or forward_pair().")
 
 
-# -----------------------------
-# Plot helpers
-# -----------------------------
 def _annotate_heatmap(ax, mat, fontsize=7):
     n = mat.shape[0]
     for i in range(n):
@@ -122,9 +112,67 @@ def save_bar(values_by_class, title, out_path, ylabel, figsize=(12, 4)):
     plt.close()
 
 
-# -----------------------------
-# Main evaluation
-# -----------------------------
+def save_cm_k_vs_rest(tp, fp, fn, tn, title, out_path):
+    """
+    Draw the same 'k vs rest' schematic layout as your screenshot:
+      - TN blocks (big)
+      - FP vertical strip
+      - FN horizontal strip
+      - TP center square
+    It repeats TN/FP/FN blocks visually (schematic), but the counts are correct.
+    """
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+
+    # Layout sizes
+    TN_w, FP_w, TN2_w = 2.2, 1.1, 2.2
+    TN_h, FN_h, TN2_h = 1.6, 1.0, 1.6
+
+    x0 = 0.0
+    x1 = x0 + TN_w
+    x2 = x1 + FP_w
+    x3 = x2 + TN2_w
+
+    y0 = 0.0
+    y1 = y0 + TN_h
+    y2 = y1 + FN_h
+    y3 = y2 + TN2_h
+
+    col_tn = "#f2b37c"
+    col_fp = "#d9826f"
+    col_fn = "#d9826f"
+    col_tp = "#8bd17c"
+
+    def block(x, y, w, h, label, value, facecolor):
+        ax.add_patch(Rectangle((x, y), w, h, facecolor=facecolor, edgecolor="black", linewidth=1))
+        ax.text(x + w/2, y + h/2, f"{label}\n{int(value)}", ha="center", va="center", fontsize=11)
+
+    block(x0, y2, TN_w, TN2_h, "TN", tn, col_tn)
+    block(x1, y2, FP_w, TN2_h, "FP", fp, col_fp)
+    block(x2, y2, TN2_w, TN2_h, "TN", tn, col_tn)
+
+    block(x0, y1, TN_w, FN_h, "FN", fn, col_fn)
+    block(x1, y1, FP_w, FN_h, "TP", tp, col_tp)
+    block(x2, y1, TN2_w, FN_h, "FN", fn, col_fn)
+
+    block(x0, y0, TN_w, TN_h, "TN", tn, col_tn)
+    block(x1, y0, FP_w, TN_h, "FP", fp, col_fp)
+    block(x2, y0, TN2_w, TN_h, "TN", tn, col_tn)
+
+    ax.text((x1 + x2) / 2, y3 + 0.35, title, ha="center", va="bottom", fontsize=12)
+    #ax.set_title(title, fontsize=12, pad=10)
+    ax.set_xlim(0, x3)
+    ax.set_ylim(0, y3)
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    ax.text((x1 + x2) / 2, y3 + 0.1, "Estimate", ha="center", va="bottom", fontsize=9)
+    ax.text(-0.1, (y1 + y2) / 2, "Ground truth", ha="right", va="center", fontsize=9, rotation=90)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200)
+    plt.close(fig)
+
+
 def main(args):
     device = "cuda" if (args.device == "cuda" and torch.cuda.is_available()) else "cpu"
     print("Using device:", device)
@@ -157,7 +205,6 @@ def main(args):
 
     print("Evaluating checkpoint:", ckpt_path)
 
-    # Safer torch.load in newer PyTorch (removes warning)
     state = torch.load(ckpt_path, map_location=device, weights_only=True) if "weights_only" in torch.load.__code__.co_varnames else torch.load(ckpt_path, map_location=device)
     model.load_state_dict(state)
     model.eval()
@@ -208,7 +255,6 @@ def main(args):
         if y == 1:
             per_class_indices[c1].append(i)
         else:
-            # count negative pair toward BOTH classes
             per_class_indices[c1].append(i)
             per_class_indices[c2].append(i)
 
@@ -217,6 +263,10 @@ def main(args):
     per_class_stats = {}
 
     print("\n--- Per-class Results (pair-conditioned) ---")
+
+    cm_k_vs_rest_dir = out_dir / "plots" / "cm_k_vs_rest_per_class"
+    cm_k_vs_rest_dir.mkdir(parents=True, exist_ok=True)
+
     for cls, idxs in sorted(per_class_indices.items()):
         if len(idxs) < args.min_pairs_per_class:
             continue
@@ -239,6 +289,13 @@ def main(args):
         roc_cls_path = out_dir / "roc_per_class" / f"roc_{cls.replace(' ', '_')}.png"
         plot_roc(st["fpr"], st["tpr"], st["auc"], out_path=str(roc_cls_path))
 
+        cm_out = cm_k_vs_rest_dir / f"cm_k_vs_rest_{cls.replace(' ', '_')}.png"
+        save_cm_k_vs_rest(
+            tp=st["TP"], fp=st["FP"], fn=st["FN"], tn=st["TN"],
+            title=f"Confusion Matrix (k vs rest) — {cls}",
+            out_path=str(cm_out),
+        )
+
         per_class_rows.append({
             "class": cls,
             "pairs": len(idxs),
@@ -254,21 +311,24 @@ def main(args):
 
     csv_out = out_dir / "per_class_metrics.csv"
     with open(csv_out, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(per_class_rows[0].keys()) if per_class_rows else
-                           ["class","pairs","auc","acc","far","frr","tp","tn","fp","fn"])
+        w = csv.DictWriter(
+            f,
+            fieldnames=list(per_class_rows[0].keys()) if per_class_rows else
+            ["class", "pairs", "auc", "acc", "far", "frr", "tp", "tn", "fp", "fn"]
+        )
         w.writeheader()
         for row in per_class_rows:
             w.writerow(row)
     print("\nSaved per-class CSV:", csv_out)
+    print("Saved per-class k-style confusion matrices in:", cm_k_vs_rest_dir)
 
     # 7) Two confusion matrices (global threshold thr)
-    # Build class list from your dataset structure to keep stable ordering
     class_names = sorted({infer_class_from_path(p) for p in all_p1 + all_p2})
     c2i = {c: i for i, c in enumerate(class_names)}
     n = len(class_names)
 
-    false_accept_cm = np.zeros((n, n), dtype=np.int32)  # FP on negative pairs
-    false_reject_cm = np.zeros((n, n), dtype=np.int32)  # FN on positive pairs (diagonal)
+    false_accept_cm = np.zeros((n, n), dtype=np.int32)  
+    false_reject_cm = np.zeros((n, n), dtype=np.int32)  
 
     for p1, p2, y, d in zip(all_p1, all_p2, labels, distances):
         c1 = infer_class_from_path(p1)
@@ -277,17 +337,14 @@ def main(args):
         pred_same = (d <= thr)
 
         if y == 0 and pred_same:
-            # False accept: different writers predicted SAME
             i = c2i[c1]
             j = c2i[c2]
             false_accept_cm[i, j] += 1
 
         if y == 1 and (not pred_same):
-            # False reject: same writer predicted DIFF
-            i = c2i[c1]  # c1==c2 typically
+            i = c2i[c1]
             false_reject_cm[i, i] += 1
 
-    # Save both matrices as images
     fa_path = out_dir / "plots" / "cm_false_accepts.png"
     fr_path = out_dir / "plots" / "cm_false_rejects.png"
 
@@ -314,7 +371,6 @@ def main(args):
 
     # 8) Bar plots per class (using per_class_stats)
     if per_class_stats:
-        # Keep same order as class_names, but only include those that exist in per_class_stats
         auc_by_c = {c: per_class_stats[c]["auc"] for c in class_names if c in per_class_stats}
         acc_by_c = {c: per_class_stats[c]["ACC"] for c in class_names if c in per_class_stats}
         far_by_c = {c: per_class_stats[c]["FAR"] for c in class_names if c in per_class_stats}
