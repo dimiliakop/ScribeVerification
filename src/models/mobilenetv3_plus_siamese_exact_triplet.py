@@ -3,13 +3,6 @@ import torch.nn as nn
 import torchvision.models as models
 
 class MobileNetV3PlusExactEmbedding(nn.Module):
-    """
-    Closer to paper:
-      base features -> 7x7x576  (torchvision)
-      1x1 reduce -> 7x7x160     (paper's 7x7x160)
-      GAP -> 1x1x160
-      1x1 -> 1x1x10             (paper's 10-D embedding)
-    """
     def __init__(self, embedding_dim=10, pretrained=True):
         super().__init__()
         base = models.mobilenet_v3_small(
@@ -42,16 +35,11 @@ class TripletNet(nn.Module):
         return self.embedding_net(x)
 
     def forward(self, anchor, positive, negative):
-        """
-        Forward pass for triplet input.
-        Returns embeddings for anchor, positive, and negative.
-        """
         z_anchor = self.forward_once(anchor)
         z_pos = self.forward_once(positive)
         z_neg = self.forward_once(negative)
         return z_anchor, z_pos, z_neg
     
-    # 🔹 Add this for evaluation
     def forward_pair(self, x1, x2):
         z1 = self.forward_once(x1)
         z2 = self.forward_once(x2)

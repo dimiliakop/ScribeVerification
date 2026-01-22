@@ -18,7 +18,7 @@ if __name__ == "__main__":
     classes = list(class_to_imgs.keys())
 
     pairs = []
-    target_pairs = 30000   # limit to ~5k pairs (balanced pos/neg)
+    target_pairs = 30000  
 
     while len(pairs) < target_pairs:
         # positive pair

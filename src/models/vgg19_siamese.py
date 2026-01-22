@@ -8,7 +8,6 @@ class VGG19Embedding(nn.Module):
         weights = models.VGG19_Weights.IMAGENET1K_V1 if pretrained else None
         net = models.vgg19(weights=weights)
 
-        # Replace the last classifier layer (1000 classes → embedding_dim)
         in_ch = net.classifier[-1].in_features
         net.classifier[-1] = nn.Linear(in_ch, embedding_dim)
 

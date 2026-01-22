@@ -11,19 +11,19 @@ train:
   epochs: 30                   # start small (5), then 20–30 for paper replication
   lr: 0.001
   weight_decay: 0.0
-  optimizer: "adamw"             # Adam optimizer (paper doesn’t specify) or AdamW for ViT
+  optimizer: "adam"             # Adam optimizer (paper doesn’t specify) or AdamW for ViT
   pos_neg_ratio: 1.0            # 1:1 positive/negative sampling
   num_workers: 2
   save_dir: "./checkpoints"
   log_every: 100                # print loss every N steps
 
 model:
-  backbone: vit_b_16"  # paper’s chosen backbone
+  backbone: "MobileNetV3"  # paper’s chosen backbone
   embedding_dim: 10             # paper requirement (1×1×10 head)
   pretrained: true              # use ImageNet pretrained MobileNetV3
 
 loss:
-  type: "triplet"
+  type: "contrastive"
   margin: 0.60                  # paper’s explicit margin
 
 eval:

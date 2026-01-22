@@ -2,11 +2,6 @@ import numpy as np
 from sklearn.metrics import roc_curve, roc_auc_score
 
 def roc_stats_from_dist(distances, labels):
-    """
-    Compute ROC, AUC, and best threshold metrics.
-    distances : np.array of L2 distances
-    labels    : np.array of 1 (same) / 0 (different)
-    """
     # For ROC, we need similarity score (higher = more likely same)
     scores = -distances
     fpr, tpr, thr = roc_curve(labels, scores)

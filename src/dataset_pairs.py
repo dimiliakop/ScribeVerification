@@ -4,12 +4,6 @@ from pathlib import Path
 import os, random, glob
 
 class PairDataset(Dataset):
-    """
-    Siamese pair dataset:
-      - Creates positive (same scribe) and negative (different scribe) pairs
-      - Adds gray-flip augmentation for minority classes (as in paper)
-      - Skips/resamples corrupted images automatically
-    """
     def __init__(self, root, transform,
                  pos_neg_ratio=1.0,
                  for_eval=False, fixed_pairs=None,
@@ -54,10 +48,6 @@ class PairDataset(Dataset):
         return self.length
 
     def _safe_load(self, path, apply_grayflip=False, max_tries=5):
-        """
-        Try to load an image safely.
-        If corrupted, resample another image from the same class up to `max_tries`.
-        """
         cls = Path(path).parent.name
         tries = 0
         while tries < max_tries:

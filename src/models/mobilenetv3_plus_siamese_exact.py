@@ -3,13 +3,6 @@ import torch.nn as nn
 import torchvision.models as models
 
 class MobileNetV3PlusExactEmbedding(nn.Module):
-    """
-    Closer to paper:
-      base features -> 7x7x576  (torchvision)
-      1x1 reduce -> 7x7x160     (paper's 7x7x160)
-      GAP -> 1x1x160
-      1x1 -> 1x1x10             (paper's 10-D embedding)
-    """
     def __init__(self, embedding_dim=10, pretrained=True):
         super().__init__()
         base = models.mobilenet_v3_small(

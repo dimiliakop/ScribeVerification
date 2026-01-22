@@ -4,12 +4,6 @@ from pathlib import Path
 import os, random, glob, numpy as np, torch
 
 class TripletDataset(Dataset):
-    """
-    Triplet dataset for training with Triplet Loss:
-      - Samples (anchor, positive, negative)
-      - Reuses same safe-loading and gray-flip augmentation ideas as PairDataset
-      - Automatically skips or resamples corrupted images
-    """
     def __init__(self, root, transform, grayflip_for_minority=True, minority_classes=None, num_samples=20000):
         self.root = Path(root)
         self.transform = transform

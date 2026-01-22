@@ -9,7 +9,7 @@ def check_images(root="./data"):
             continue
         try:
             with Image.open(p) as img:
-                img.verify()  # check header
+                img.verify()  
         except Exception as e:
             print(f"[BAD] {p} ({e})")
             bad_files.append(str(p))

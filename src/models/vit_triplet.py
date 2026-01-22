@@ -17,7 +17,6 @@ class ViT_Embedding(nn.Module):
 
 
 class TripletNet(nn.Module):
-    """ViT-based Triplet Network for triplet loss training."""
     def __init__(self, embedding_dim=10, pretrained=True):
         super().__init__()
         self.embedding_net = ViT_Embedding(embedding_dim, pretrained)
@@ -32,7 +31,6 @@ class TripletNet(nn.Module):
         return z_a, z_p, z_n
 
     def forward_pair(self, x1, x2):
-        """Used during evaluation."""
         z1 = self.forward_once(x1)
         z2 = self.forward_once(x2)
         return z1, z2

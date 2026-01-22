@@ -17,7 +17,6 @@ class ViT_Embedding(nn.Module):
 
 
 class SiameseNet(nn.Module):
-    """ViT-based Siamese Network for contrastive loss."""
     def __init__(self, embedding_dim=10, pretrained=True):
         super().__init__()
         self.embedding_net = ViT_Embedding(embedding_dim, pretrained)
