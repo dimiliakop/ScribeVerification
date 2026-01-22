@@ -139,19 +139,6 @@ This is expected in **metric learning verification**.
 
 ---
 
-📦** What evaluation produces**
-
-- roc_overall.png
-- roc_per_class/roc_<class>.png
-- per_class_metrics.csv
-- cm_false_accepts.png
-- cm_false_rejects.png
-- bar_auc_per_class.png
-- bar_acc_per_class.png
-- bar_far_per_class.png
-- bar_frr_per_class.png
-- k-vs-rest schematic confusion matrices
-
 ---
 
 ## 📈 Results Summary
