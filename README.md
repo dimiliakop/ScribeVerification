@@ -126,9 +126,9 @@ This ensures **reproducible and fair evaluation**.
 
 ---
 
-## 🔍 Example: Why Bao Xun Has 4106 Evaluated Pairs
+## 🔍 Total Evaluated pairs (e.g. Bao Xun class)
 ---
-Although Bao Xun has ~40 test images:
+Although Bao Xun class has ~40 test images:
 
 - Positive pairs: C(40,2) = 780
 - Negative pairs: Bao Xun images paired with many other scribes ≈ 3300+
