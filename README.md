@@ -127,7 +127,6 @@ This ensures **reproducible and fair evaluation**.
 ---
 
 ## 🔍 Example: Why Bao Xun Has 4106 Evaluated Pairs
-
 ---
 Although Bao Xun has ~40 test images:
 
