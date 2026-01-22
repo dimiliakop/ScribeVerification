@@ -108,7 +108,7 @@ python evaluate_triplet_perclass_full.py `
  --out_dir eval_<model>_<architecture>
 ```
 
-## 📄 test_pairs.csv
+## 📄 Evaluation based on test_pairs.csv
 
 All evaluations are driven by a fixed CSV file:
 
@@ -116,6 +116,7 @@ All evaluations are driven by a fixed CSV file:
 path1,path2,label
 Bao_Xun/img_001.png,Bao_Xun/img_014.png,1
 Bao_Xun/img_003.png,Guan_Zhong/img_008.png,0
+...
 ```
 
 - `label = 1`: same scribe
@@ -138,7 +139,8 @@ This is expected in **metric learning verification**.
 
 ---
 
-📦 Evaluation Produces:
+📦** What evaluation produces**
+
 - roc_overall.png
 - roc_per_class/roc_<class>.png
 - per_class_metrics.csv
