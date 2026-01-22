@@ -16,20 +16,24 @@ The project includes:
 ## 📁 Project Structure
 
 ```
-├── configs/                # YAML configuration files
-├── data/                   # (Not included) Dataset folders: train/ and test/
+├── configs/                            # YAML configuration files
+├── data/                               # (Not included) Dataset folders: train/ and test/
 ├── src/
-│   ├── models/             # CNN, Siamese, Triplet, ViT architectures
-│   ├── dataset_pairs.py    # Pair dataset for Siamese training
-│   ├── dataset_triplets.py # Triplet dataset for Triplet learning
-│   ├── transforms.py       # Image preprocessing pipeline
-│   ├── losses.py           # Contrastive and Triplet losses
-│   ├── metrics.py          # ROC/AUC/FAR/FRR metrics
-│   └── viz.py              # ROC visualization utilities
-├── train.py                # Siamese training script
-├── train_triplet.py        # Triplet training script
-├── evaluate.py             # Evaluation on fixed pairs
-├── evaluate_triplet.py     # Triplet evaluation
+│   ├── models/                         # CNN, Siamese, Triplet, ViT architectures
+│   ├── dataset_pairs.py                # Pair dataset for Siamese training
+│   ├── dataset_triplets.py             # Triplet dataset for Triplet learning
+│   ├── transforms.py                   # Image preprocessing pipeline
+│   ├── losses.py                       # Contrastive and Triplet losses
+│   ├── metrics.py                      # ROC/AUC/FAR/FRR metrics
+│   └── viz.py                          # ROC visualization# utilities
+├── train_siamese.py                    # Siamese training script
+├── train_triplet.py                    # Triplet training script
+├── evaluate_siamese.py                 # Evaluation on fixed pairs
+├── evaluate_siamese_perclass.py        # Evaluation on fixed pairs - ROC per class, AUC/ACC/FAR/FRR graphs and FN/FP Confusion Matrices
+├── evaluate_siamese_perclass_full.py   # Evaluation on fixed pairs - ROC per class, AUC/ACC/FAR/FRR graphs, FN/FP Confusion Matrices and Confusion Matrices TP/TN/FP/FN per class
+├── evaluate_triplet.py                 # Evaluation on triplet
+├── evaluate_siamese_perclass.py        # Evaluation on triplet - ROC per class, AUC/ACC/FAR/FRR graphs and FN/FP Confusion Matrices
+├── evaluate_siamese_perclass_full.py   # Evaluation on triplet - ROC per class, AUC/ACC/FAR/FRR graphs, FN/FP Confusion Matrices and Confusion Matrices TP/TN/FP/FN per class
 └── README.md               # Project documentation
 ```
 
@@ -76,7 +80,7 @@ pip install -r requirements.txt
 
 ### Train a Siamese Network
 ```bash
-python train.py --config configs/default.yaml
+python train_siamese.py --config configs/default.yaml
 ```
 
 ### Train a Triplet Network
@@ -90,12 +94,18 @@ python train_triplet.py --config configs/triplet.yaml
 
 ### Evaluate a Siamese Model
 ```bash
-python evaluate.py
+python evaluate_siamese_perclass_full.py `
+ --model_module src.models.<script> `
+ --ckpt checkpoints\<model>_<architecture>_e<epoch_number>.pt `
+ --out_dir eval_<model>_<architecture>
 ```
 
 ### Evaluate a Triplet Model
 ```bash
-python evaluate_triplet.py
+python evaluate_triplet_perclass_full.py `
+ --model_module src.models.<script> `
+ --ckpt checkpoints\<model>_<architecture>_e<epoch_number>.pt `
+ --out_dir eval_<model>_<architecture>
 ```
 
 ---
