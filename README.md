@@ -107,6 +107,7 @@ python evaluate_triplet_perclass_full.py `
  --ckpt checkpoints\<model>_<architecture>_e<epoch_number>.pt `
  --out_dir eval_<model>_<architecture>
 ```
+---
 
 ## 📄 Evaluation based on test_pairs.csv
 
