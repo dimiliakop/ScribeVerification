@@ -110,6 +110,7 @@ python evaluate_triplet_perclass_full.py `
 
 ## 📄 Evaluation based on test_pairs.csv
 
+test_pairs.csv contains 30000 pairs.
 All evaluations are driven by a fixed CSV file:
 
 ```
