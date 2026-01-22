@@ -113,8 +113,8 @@ python evaluate_triplet_perclass_full.py `
 ## 📈 Results Summary
 
 - **MobileNetV3+ Custom (Siamese)** achieved the best overall performance  
-  - AUC: ~0.95  
-  - Accuracy: ~0.88  
+  - AUC: ~0.958  
+  - Accuracy: ~89.1%  
 - Triplet learning did **not** outperform contrastive learning in this domain.  
 - ViT-B/16 Siamese performed lower than CNN-based methods on both datasets.
 
