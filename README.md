@@ -108,6 +108,36 @@ python evaluate_triplet_perclass_full.py `
  --out_dir eval_<model>_<architecture>
 ```
 
+## 📄 Evaluation based on test_pairs.csv
+
+test_pairs.csv contains 30000 pairs.
+All evaluations are driven by a fixed CSV file:
+
+```
+path1,path2,label
+Bao_Xun/img_001.png,Bao_Xun/img_014.png,1
+Bao_Xun/img_003.png,Guan_Zhong/img_008.png,0
+...
+```
+
+- `label = 1`: same scribe
+- `label = 0`: different scribes
+
+This ensures **reproducible and fair evaluation**.
+
+---
+
+## 🔍 Total Evaluated pairs per class (e.g. Bao Xun class)
+
+Although Bao Xun class has ~40 test images:
+
+- Positive pairs: C(40,2) = 780
+- Negative pairs: Bao Xun images paired with many other scribes ≈ 3300+
+
+Total ≈ **4106 evaluation pairs**
+
+This is expected in **metric learning verification**.
+
 ---
 
 ## 📈 Results Summary
