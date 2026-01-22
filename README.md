@@ -127,7 +127,7 @@ This ensures **reproducible and fair evaluation**.
 
 ---
 
-## 🔍 Total Evaluated pairs (e.g. Bao Xun class)
+## 🔍 Total Evaluated pairs per class (e.g. Bao Xun class)
 
 Although Bao Xun class has ~40 test images:
 
