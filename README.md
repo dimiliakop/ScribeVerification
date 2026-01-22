@@ -128,6 +128,7 @@ This ensures **reproducible and fair evaluation**.
 
 ## 🔍 Example: Why Bao Xun Has 4106 Evaluated Pairs
 
+---
 Although Bao Xun has ~40 test images:
 
 - Positive pairs: C(40,2) = 780
@@ -136,8 +137,6 @@ Although Bao Xun has ~40 test images:
 Total ≈ **4106 evaluation pairs**
 
 This is expected in **metric learning verification**.
-
----
 
 ---
 
