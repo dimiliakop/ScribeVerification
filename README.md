@@ -128,7 +128,7 @@ This ensures **reproducible and fair evaluation**.
 ---
 
 ## 🔍 Total Evaluated pairs (e.g. Bao Xun class)
----
+
 Although Bao Xun class has ~40 test images:
 
 - Positive pairs: C(40,2) = 780
